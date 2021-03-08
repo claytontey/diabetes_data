@@ -32,10 +32,13 @@ def information():
     print('\nDiagnóstico por classe:\n', df['diabetes'].value_counts())
     print('Valores faltantes: ', df.isnull().values.any())
 
-# convertendo target    
-map_data = {True : 1, False : 0}
-df['diabetes'] = df['diabetes'].map(map_data)
-#print(df.head())
+# convertendo target onde 1 = diabetes e 0 = não-diabetes
+#map_data = {True : 1, False : 0}
+#df['diabetes'] = df['diabetes'].map(map_data)
+print(df.head())
+
+vl_true = df['diabetes'].value_counts()
+print(vl_true)
 
 
 def plot_corr(df, size=10):
@@ -47,6 +50,7 @@ def plot_corr(df, size=10):
 
 
 
+# **************************** Plots ***************************************#
 def correlation():
     print('Valor de correlação: \n')
     df.corr()
@@ -57,4 +61,4 @@ def correlation():
 
 
 information()
-correlation()
+#correlation()

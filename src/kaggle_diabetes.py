@@ -21,25 +21,28 @@ for i in files_names:
     df = pd.read_csv(os.path.join( DATA_DIR, i ))
 
 
+# convertendo target onde 1 = diabetes(paciente) e 0 = não-diabetes(controle)
+map_data = {True : 1, False : 0}
+df['diabetes'] = df['diabetes'].map(map_data)
+
+vl_paciente = len(df.loc[df['diabetes'] == 1])
+vl_controle = len(df.loc[df['diabetes'] == 0])
+
+# **************************** Funções ***************************************
+
 def information():
     print('\n**************** Informações sobre o Dataset **********************************\n')
     print('Diretórios: \n')
     print('Projeto: ', BASE_DIR)
     print('Dataset: ', DATA_DIR)
-    print('\nSamples and Eeatures:\n')
+    print('\nSamples and Features:\n')
     print(df.head())
-    print('Conjunto de dados com %d linhas e %d colunas.' %(len(df[:]), len(df.columns)))
-    print('\nDiagnóstico por classe:\n', df['diabetes'].value_counts())
-    print('Valores faltantes: ', df.isnull().values.any())
-
-# convertendo target onde 1 = diabetes e 0 = não-diabetes
-#map_data = {True : 1, False : 0}
-#df['diabetes'] = df['diabetes'].map(map_data)
-print(df.head())
-
-vl_true = df['diabetes'].value_counts()
-print(vl_true)
-
+    print('\nO conjunto de dados possui %d linhas e %d colunas para: ' %(len(df[:]), len(df.columns)))
+    #print('\nDiagnóstico por classe:\n', df['diabetes'].value_counts())
+    print('     %d pacientes, que correspondem a %.2f%% do conjunto de dados' %(vl_paciente, vl_paciente / (vl_paciente + vl_controle)*100))
+    print('     %d controles, que correspondem a %.2f%% do conjunto de dados' %(vl_controle, vl_controle / (vl_controle + vl_paciente)*100))
+    #print('Valores faltantes: ', df.isnull().values.any())
+    
 
 def plot_corr(df, size=10):
     corr = df.corr()
@@ -50,7 +53,7 @@ def plot_corr(df, size=10):
 
 
 
-# **************************** Plots ***************************************#
+# **************************** Plots ***************************************
 def correlation():
     print('Valor de correlação: \n')
     df.corr()

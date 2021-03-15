@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 import os
-import time
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Perceptron
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
@@ -12,8 +13,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 from sklearn.svm import SVC
-from sklearn.linear_model import Perceptron
-from sklearn.impute import SimpleImputer
 plt.style.use('ggplot')
 
 
@@ -51,7 +50,8 @@ samples0 = np.where(df.diabetes == 0)
 samples1 = np.where(df.diabetes == 1)
 
 
-# Creates a list of training time, predicting time and accuracies
+# Creates a list of predicting time and accuracies
+accuracy_LR = []
 accuracy_PC = []
 accuracy_RF = []
 accuracy_NB = []
@@ -127,9 +127,18 @@ def split_model():
     rould = 0.10
     epochs = 1
     # Iterates over a set of runnings
-    for i in range(3):
+    for i in range(1):
         X_train, X_test, y_train, y_test = train_test_split(dt_feature, dt_target, test_size=0.3, random_state=i)
+        print('Divisão do conjunto de dados:\n')
+        print('X_train: %d\ny_train: %d\nX_test: %d\ny_test: %d\n' %(len(X_train), len(y_train), len(X_test), len(y_test)))
 
+
+        # Regressão Logistica
+        lr = LogisticRegression(random_state=i).fit(X_train, y_train)
+        lr_predictions = lr.predict(X_test)
+        acc_lr = lr.score(X_test, y_test)
+        
+        
         # Perceptron
         percep = Perceptron(random_state=i)
         percep.fit(X_train, y_train)
@@ -158,27 +167,38 @@ def split_model():
         dt_predictions = dt.predict(X_test)
         acc_dt = dt.score(X_test, y_test)
             
-            
+
+        # SVM
+        clf = SVC(kernel='linear')
+        clf = clf.fit(X_train, y_train)
+        clf_pred = clf.predict(X_test)
+        acc_clf = clf.score(X_test, y_test)
+
         # SVM-RBF
-        param_grid = {'C':[1, 5, 10, 50, 100, 500, 1000, 5000], 'gamma':[0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1]}
-        rbf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
-        rbf = rbf.fit(X_train, y_train)
-        #rbf = svm.SVC(kernel='rbf', gamma=1, C=1, decision_function_shape='ovo')
-        #rbf.fit(X_train, Y_train)
-        rbf_pred = rbf.predict(X_test)
-        acc_rbf = rbf.score(X_test, y_test)
-        print('Best estimator found by grid search: ')
-        print(rbf.best_estimator_)
-        print('Best Score: ',rbf.best_score_)
+        #param_grid = {'C':[1, 5, 10, 50, 100, 500, 1000, 5000], 'gamma':[0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1]}
+        #rbf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
+        #rbf = rbf.fit(X_train, y_train)
+        #rbf_pred = rbf.predict(X_test)
+        #acc_rbf = rbf.score(X_test, y_test)
+        #print('Best estimator found by grid search: ')
+        #print(rbf.best_estimator_)
+        #print('Best Score: ',rbf.best_score_)
             
         # Accuracy
+        accuracy_LR.append(acc_lr)
         accuracy_PC.append(acc_percep)
         accuracy_RF.append(acc_rf)
         accuracy_NB.append(acc_nb)
         accuracy_DT.append(acc_dt)
-        accuracy_SVM.append(acc_rbf)
+        #accuracy_SVM.append(acc_rbf)
+        accuracy_SVM.append(acc_clf)
 
-           
+
+
+        print('\nResultados Regressão Linear:\nAcc_LR: ',acc_lr,'\nepoch: ',epochs)
+        print(metrics.confusion_matrix(y_test, lr_predictions) )
+        print("\nClassification Report:\n ", metrics.classification_report(y_test, lr_predictions))
+
         print('\nResultados Perceptron:\nAcc_PC: ',acc_percep,'\nepoch: ',epochs)
         print(metrics.confusion_matrix(y_test, percep.predictions) )
         print("\nClassification Report:\n ", metrics.classification_report(y_test, percep.predictions))
@@ -195,9 +215,16 @@ def split_model():
         print(metrics.confusion_matrix(y_test, dt_predictions) )
         print("\nClassification Report:\n ", metrics.classification_report(y_test, dt_predictions))
 
+        '''
         print('\nResultados Suport Vector Machine:\nAcc_SVM: ',acc_rbf,'\nepoch: ',epochs)   
         print(metrics.confusion_matrix(y_test, rbf_pred) )
         print("\nClassification Report:\n ", metrics.classification_report(y_test, rbf_pred)) 
+        print('\n\n')
+        '''
+
+        print('\nResultados Suport Vector Machine:\nAcc_SVM: ',acc_clf,'\nepoch: ',epochs)   
+        print(metrics.confusion_matrix(y_test, clf_pred) )
+        print("\nClassification Report:\n ", metrics.classification_report(y_test, clf_pred)) 
         print('\n\n')
 
         
@@ -209,6 +236,7 @@ def split_model():
         #sns.heatmap(cf_matrix, annot=True, fmt='', cmap='Blues')
         #plt.show()
 
+    print('Acuracia média Regressão Linear de %.2f%%.' %(np.mean(accuracy_LR)*100))
     print('Acuracia média Perceptron de %.2f%%.' %(np.mean(accuracy_PC)*100))
     print('Acuracia média Random Forest de %.2f%%.' %(np.mean(accuracy_RF)*100))
     print('Acuracia média Nayve Bayes de %.2f%%.' %(np.mean(accuracy_NB)*100))
@@ -220,6 +248,6 @@ def split_model():
 
 #bolxplot()
 #plot_corr(df, size=10)
-#information()
+information()
 #correlation()
 split_model()

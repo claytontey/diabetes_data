@@ -149,7 +149,7 @@ def split_model():
 
 
         # Randon Forest
-        rf = RandomForestClassifier(random_state=i)      # Create random forest object
+        rf = RandomForestClassifier(random_state=i)     
         rf.fit(X_train, y_train)
         rf_predictions = rf.predict(X_test)
         acc_rf = rf.score(X_test, y_test)
@@ -176,24 +176,14 @@ def split_model():
         clf_pred = clf.predict(X_test)
         acc_clf = clf.score(X_test, y_test)
 
-        # SVM-RBF
-        #param_grid = {'C':[1, 5, 10, 50, 100, 500, 1000, 5000], 'gamma':[0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1]}
-        #rbf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
-        #rbf = rbf.fit(X_train, y_train)
-        #rbf_pred = rbf.predict(X_test)
-        #acc_rbf = rbf.score(X_test, y_test)
-        #print('Best estimator found by grid search: ')
-        #print(rbf.best_estimator_)
-        #print('Best Score: ',rbf.best_score_)
-            
+                    
         # Accuracy
         accuracy_LR.append(acc_lr)
         accuracy_PC.append(acc_percep)
         accuracy_RF.append(acc_rf)
         accuracy_NB.append(acc_nb)
         accuracy_DT.append(acc_dt)
-        #accuracy_SVM.append(acc_rbf)
-        accuracy_SVM.append(acc_clf)
+                accuracy_SVM.append(acc_clf)
 
 
 

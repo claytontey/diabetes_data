@@ -127,10 +127,12 @@ def split_model():
     rould = 0.10
     epochs = 1
     # Iterates over a set of runnings
-    for i in range(1):
+    for i in range(5):
         X_train, X_test, y_train, y_test = train_test_split(dt_feature, dt_target, test_size=0.3, random_state=i)
         print('Divisão do conjunto de dados:\n')
         print('X_train: %d\ny_train: %d\nX_test: %d\ny_test: %d\n' %(len(X_train), len(y_train), len(X_test), len(y_test)))
+        print('Quantidade de amostras da classe 0: ',len(y_test.loc[y_test == 0]))
+        print('Quantidade de amostras da classe 1: ',len(y_test.loc[y_test == 1]))
 
 
         # Regressão Logistica
@@ -207,7 +209,7 @@ def split_model():
         print(metrics.confusion_matrix(y_test, rf_predictions) )
         print("\nClassification Report:\n ", metrics.classification_report(y_test, rf_predictions))
 
-        print('\nResultados Nayve Bayes:\nAcc_NB: ',acc_nb,'\nepoch: ',epochs)
+        print('\nResultados Naive Bayes:\nAcc_NB: ',acc_nb,'\nepoch: ',epochs)
         print(metrics.confusion_matrix(y_test, gnb_predictions) )
         print("\nClassification Report:\n ", metrics.classification_report(y_test, gnb_predictions))
 
@@ -232,16 +234,16 @@ def split_model():
         epochs+=1
 
         # matriz de confusão
-        #cf_matrix = confusion_matrix(y_test, rbf_pred)
+        #cf_matrix = confusion_matrix(y_test, gnb_predictions)
         #sns.heatmap(cf_matrix, annot=True, fmt='', cmap='Blues')
         #plt.show()
 
-    print('Acuracia média Regressão Linear de %.2f%%.' %(np.mean(accuracy_LR)*100))
-    print('Acuracia média Perceptron de %.2f%%.' %(np.mean(accuracy_PC)*100))
-    print('Acuracia média Random Forest de %.2f%%.' %(np.mean(accuracy_RF)*100))
-    print('Acuracia média Nayve Bayes de %.2f%%.' %(np.mean(accuracy_NB)*100))
-    print('Acuracia média Decision Tree de %.2f%%.' %(np.mean(accuracy_DT)*100))
-    print('Acuracia média Suport Vector Machine de %.2f%%.' %(np.mean(accuracy_SVM)*100))
+    print('Acurácia média Regressão Linear de %.2f%%.' %(np.mean(accuracy_LR)*100))
+    print('Acurácia média Perceptron de %.2f%%.' %(np.mean(accuracy_PC)*100))
+    print('Acurácia média Random Forest de %.2f%%.' %(np.mean(accuracy_RF)*100))
+    print('Acurácia média Naive Bayes de %.2f%%.' %(np.mean(accuracy_NB)*100))
+    print('Acurácia média Decision Tree de %.2f%%.' %(np.mean(accuracy_DT)*100))
+    print('Acurácia média Suport Vector Machine de %.2f%%.' %(np.mean(accuracy_SVM)*100))
     
 
 

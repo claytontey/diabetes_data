@@ -183,7 +183,7 @@ def split_model():
         accuracy_RF.append(acc_rf)
         accuracy_NB.append(acc_nb)
         accuracy_DT.append(acc_dt)
-                accuracy_SVM.append(acc_clf)
+        accuracy_SVM.append(acc_clf)
 
 
 
